@@ -1,0 +1,4 @@
+com\divx\lingshi\extension\SPI.class
+com\divx\lingshi\utils\StringUtils.class
+com\divx\lingshi\extension\ExtensionLoader.class
+com\divx\lingshi\extension\Holder.class

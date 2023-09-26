@@ -1,0 +1,3 @@
+kyro=com.divx.lingshi.serialize.kyro.KryoSerializer
+protostuff=com.divx.lingshi.serialize.protostuff.ProtostuffSerializer
+hessian=com.divx.lingshi.serialize.hessian.HessianSerializer

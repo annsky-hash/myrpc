@@ -1,9 +1,12 @@
 package com.divx.lingshi.registry;
 
 import com.divx.lingshi.config.RpcServiceConfig;
+import com.divx.lingshi.extension.SPI;
 
 import java.net.InetSocketAddress;
 
+
+@SPI
 public interface ServiceRegistry {
 
     /**

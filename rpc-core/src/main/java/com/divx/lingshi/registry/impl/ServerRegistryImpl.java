@@ -14,5 +14,6 @@ public class ServerRegistryImpl implements ServiceRegistry {
     public void registryService(String rpcServiceName, InetSocketAddress inetSocketAddress) {
         String servicePath = ZK_REGISTER_ROOT_PATH + "/" + rpcServiceName + inetSocketAddress.toString();
         CuratorFramework zkClient = CuratorUtils.connect();
+        CuratorUtils.registerPersistentNode(zkClient,servicePath);
     }
 }

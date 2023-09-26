@@ -3,12 +3,15 @@ package com.divx.lingshi.provider.zk;
 import com.divx.lingshi.config.RpcServiceConfig;
 import com.divx.lingshi.enums.RpcErrorMessageEnum;
 import com.divx.lingshi.exception.RpcException;
-import com.divx.lingshi.extension.ExtensionLoader;
 import com.divx.lingshi.provider.ServiceProvider;
 import com.divx.lingshi.registry.ServiceRegistry;
 import com.divx.lingshi.registry.impl.ServerRegistryImpl;
+import com.divx.lingshi.remoting.transport.netty.NettyRpcServer;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,9 +31,21 @@ public class ZkServiceProvider implements ServiceProvider {
         serviceRegistry = new ServerRegistryImpl();
     }
 
+    /**
+     * 注册服务
+     * @param rpcServiceConfig
+     */
     @Override
     public void publishService(RpcServiceConfig rpcServiceConfig) {
-
+        try {
+            String host = InetAddress.getLocalHost().getHostAddress();
+            //加入缓存
+            this.addService(rpcServiceConfig);
+            //注册服务，参数：服务名，服的地址
+            serviceRegistry.registryService(rpcServiceConfig.getRpcServiceName(), new InetSocketAddress(host, NettyRpcServer.port));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

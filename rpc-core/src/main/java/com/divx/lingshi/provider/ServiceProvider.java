@@ -10,7 +10,7 @@ public interface ServiceProvider {
     void publishService(RpcServiceConfig rpcServiceConfig);
 
     /**
-     * 注册服务到zk注册中心
+     * 服务加入到缓存
      * @param rpcServiceConfig
      */
     void addService(RpcServiceConfig rpcServiceConfig);

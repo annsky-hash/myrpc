@@ -1,0 +1,2 @@
+netty=com.divx.lingshi.remoting.transport.netty.client.NettyRpcClient
+socket=com.divx.lingshi.remoting.transport.socket.SocketRpcClient

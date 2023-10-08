@@ -8,6 +8,8 @@ import com.divx.lingshi.provider.zk.ZkServiceProvider;
 import com.divx.lingshi.remoting.handler.NettyRpcServerHandler;
 import com.divx.lingshi.remoting.transport.codec.RpcMessageDecoder;
 import com.divx.lingshi.remoting.transport.codec.RpcMessageEncoder;
+import com.divx.lingshi.utils.RuntimeUtil;
+import com.divx.lingshi.utils.ThreadPoolFactoryUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,6 +18,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,13 +48,17 @@ public class NettyRpcServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         //用来处理建链后的读写请求的线程池
         EventLoopGroup workerGroup = new NioEventLoopGroup();
+        DefaultEventExecutorGroup serviceHandlerGroup = new DefaultEventExecutorGroup(
+                RuntimeUtil.cpus() * 2,
+                ThreadPoolFactoryUtil.createThreadFactory("service-handler-group", false)
+        );
         try{
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup,workerGroup)
                     //默认建立NioServerSocketChannel，所以用NioServerSocketChannel.class作为参数
                     .channel(NioServerSocketChannel.class)
                     //childOption()是对NioServerSocketChannel建立之后设置属性
-                    //TCP开启Nagle算法，该算法作用尽可能发送大数据块，减少网络IO
+                    //TCP开启Nagle算法，该算法作用尽可能发送大数据块，减少网络IO。TCP_NODELAY 参数的作用就是控制是否启用 Nagle 算法。
                     .childOption(ChannelOption.TCP_NODELAY,true)
                     //开启底层心跳检查
                     .childOption(ChannelOption.SO_KEEPALIVE,true)
@@ -66,7 +73,7 @@ public class NettyRpcServer {
                             p.addLast(new IdleStateHandler(30,0,0, TimeUnit.SECONDS));
                             p.addLast(new RpcMessageEncoder());
                             p.addLast(new RpcMessageDecoder());
-                            p.addLast(new NettyRpcServerHandler());
+                            p.addLast(serviceHandlerGroup, new NettyRpcServerHandler());
                         }
                     });
             ChannelFuture f = b.bind(host, port).sync();
@@ -77,7 +84,7 @@ public class NettyRpcServer {
             log.error("shutdown bossGroup and workerGroup");
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
-            //serviceHandlerGroup.shutdownGracefully();
+            serviceHandlerGroup.shutdownGracefully();
         }
     }
 }

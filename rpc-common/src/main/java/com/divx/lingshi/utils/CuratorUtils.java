@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -23,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class CuratorUtils {
 
     private static final String DEFAULT_ZOOKEEPER_ADDRESS = "127.0.0.1:2181";
-    private static final Map<String,CuratorFramework> zkClientMap = new ConcurrentHashMap<>();
+    private static final Map<String,List<String>> SERVICE_ADDRESS_MAP = new ConcurrentHashMap<>();
     private static final Set<String> SERVICE_PATH = ConcurrentHashMap.newKeySet();
     private static CuratorFramework zkClient;
 
@@ -36,8 +38,8 @@ public class CuratorUtils {
         Properties properties = PropertiesUtils.readProperties(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
         String ZKAddress = properties!= null && properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) != null ? properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) : DEFAULT_ZOOKEEPER_ADDRESS;
         //现在缓存中找
-        if(zkClientMap.containsKey(ZKAddress)){
-            return zkClientMap.get(ZKAddress);
+        if(zkClient != null && zkClient.getState() == CuratorFrameworkState.STARTED){
+            return zkClient;
         }
         //retry strategy. retry 3 times ,and will increase the sleep time between retries
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000,3);
@@ -88,5 +90,10 @@ public class CuratorUtils {
             }
         });
         log.info("All registered services on the server are cleared:[{}]", SERVICE_PATH.toString());
+    }
+
+    public static List<String> getChildrenNodes(CuratorFramework zkClient, String rpcServiceName) {
+        String serverPath = "/myRpc/" + rpcServiceName;
+        return null;
     }
 }

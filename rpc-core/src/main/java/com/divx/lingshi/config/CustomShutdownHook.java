@@ -1,6 +1,6 @@
 package com.divx.lingshi.config;
 
-import com.divx.lingshi.remoting.transport.netty.NettyRpcServer;
+import com.divx.lingshi.remoting.transport.netty.server.NettyRpcServer;
 import com.divx.lingshi.utils.CuratorUtils;
 import lombok.extern.slf4j.Slf4j;
 

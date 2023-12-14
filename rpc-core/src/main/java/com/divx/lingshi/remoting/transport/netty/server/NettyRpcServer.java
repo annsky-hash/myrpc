@@ -1,4 +1,4 @@
-package com.divx.lingshi.remoting.transport.netty;
+package com.divx.lingshi.remoting.transport.netty.server;
 
 import com.divx.lingshi.config.CustomShutdownHook;
 import com.divx.lingshi.config.RpcServiceConfig;

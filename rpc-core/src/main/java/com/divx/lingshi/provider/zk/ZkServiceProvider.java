@@ -5,8 +5,8 @@ import com.divx.lingshi.enums.RpcErrorMessageEnum;
 import com.divx.lingshi.exception.RpcException;
 import com.divx.lingshi.provider.ServiceProvider;
 import com.divx.lingshi.registry.ServiceRegistry;
-import com.divx.lingshi.registry.impl.ServerRegistryImpl;
-import com.divx.lingshi.remoting.transport.netty.NettyRpcServer;
+import com.divx.lingshi.registry.impl.ServiceRegistryImpl;
+import com.divx.lingshi.remoting.transport.netty.server.NettyRpcServer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -28,7 +28,7 @@ public class ZkServiceProvider implements ServiceProvider {
         serviceMap = new ConcurrentHashMap<>();
         registeredService = ConcurrentHashMap.newKeySet();
         //serviceRegistry = ExtensionLoader.getExtensionLoader(ServiceRegistry.class).getExtension("zk");
-        serviceRegistry = new ServerRegistryImpl();
+        serviceRegistry = new ServiceRegistryImpl();
     }
 
     /**

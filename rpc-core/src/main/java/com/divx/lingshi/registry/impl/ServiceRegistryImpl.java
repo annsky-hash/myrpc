@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.net.InetSocketAddress;
 
-public class ServerRegistryImpl implements ServiceRegistry {
+public class ServiceRegistryImpl implements ServiceRegistry {
 
     public static final String ZK_REGISTER_ROOT_PATH = "/my-rpc";
     @Override
